@@ -23,7 +23,7 @@
 
         public override void Process(string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
         {
-            sendResponse("I only do !whois [name]");
+            sendResponse("\n!help - this command\n!whois [name] - get character info\n!level [level] - get level info");
         }
     }
 }
