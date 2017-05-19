@@ -11,6 +11,16 @@
 
     public class Program
     {
+        // reused response prefix & suffix
+        private const string ResponsePrefix = "```\nBleep bloop. ";
+        private const string ResponseSuffix = "\n```";
+
+        // wraps some text in the prefix & suffix
+        private string WrapResponse(string response)
+        {
+            return ResponsePrefix + response + ResponseSuffix;
+        }
+
         // fancy lamda expression to avoid properly defining static Main method, thus saving 5 seconds
         public static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
@@ -139,7 +149,7 @@
             if (command.Equals("help", StringComparison.InvariantCultureIgnoreCase))
             {
                 // generate response text
-                var response = "```\nBleep bloop. I only do !whois [name]\n```";
+                var response = this.WrapResponse("I only do !whois [name]");
 
                 // log & send
                 this.UnifiedLog(response, LogType.Green);
@@ -169,7 +179,7 @@
                 {
                     // the web api returns the text 'null' if it can't find the character you requested
                     // generate response, log, send & stop
-                    response = string.Format("```\nBleep bloop. Couldn't find character '{0}'.\n```", parameter);
+                    response = this.WrapResponse(string.Format("Couldn't find character '{0}'.", parameter));
 
                     this.UnifiedLog(response, LogType.Green);
                     await message.Channel.SendMessageAsync(response);
@@ -193,21 +203,18 @@
                 var headData = this.webClient.DownloadData(headUrl);
                 // copy it into a memory stream
                 var headStream = new MemoryStream(headData);
-
-                // start generating a response
-                response = "```\n";
-
-                // add the general character info
+                
+                // add the general character info to the response
                 response +=
                     string.Format(
-                        "Bleep bloop. {0} '{1}' {2} is a{3} {4} {5} {6} {7}, level {8}.",
+                        "{0} '{1}' {2} is a{3} {4} {5} {6} {7}, level {8}.",
                         mainData.FIRSTNAME,
                         mainData.NAME,
                         mainData.LASTNAME,
-                        mainData.SIDE == "Omni" ? "n" : "",
+                        mainData.SIDE == "Omni" ? "n" : "", // 'an', not 'a' :)
                         mainData.SIDE,
                         mainData.SEX,
-                        mainData.BREED,
+                        mainData.BREED == "Nano" ? "Nanomage" : mainData.BREED, // might as well give them the proper name
                         mainData.PROF,
                         mainData.LEVELX);
 
@@ -224,12 +231,15 @@
                             orgData.RANK_TITLE,
                             orgData.NAME);
                 }
-
-                // remove double spaces from response, this might happen if the character doesn't have a first and last name
-                response = response.Replace("  ", " ");
-
+                
                 // add last updated and finish response
-                response += string.Format(" (Updated {0}).\n```", updated);
+                response += string.Format(" (Updated {0}).", updated);
+
+                // wrap the response
+                response = this.WrapResponse(response);
+
+                // remove double spaces from response, this might happen if the character doesn't have a first / last name
+                response = response.Replace("  ", " ");
 
                 // log & send
                 this.UnifiedLog(response, LogType.Green);
@@ -240,7 +250,6 @@
                 headStream = null;
 
                 // stop
-
                 return;
             }
         }
