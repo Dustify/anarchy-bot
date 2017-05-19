@@ -22,10 +22,12 @@
             return ResponsePrefix + response + ResponseSuffix;
         }
 
+        // store all handlers in a collection
         private List<HandlerBase> Handlers = new List<HandlerBase>();
 
         public Manager()
         {
+            // add handlers to collection, this could be automated with reflection
             this.Handlers.Add(new Help());
             this.Handlers.Add(new Whois());
 
@@ -153,20 +155,26 @@
             var command = match.Groups[1].Value;
             var parameter = match.Groups[2].Value;
 
+            // basic send response method, text only
             Action<string> sendResponse = 
                 async (string response) => 
                 {
+                    // wrap response
                     response = this.WrapResponse(response);
 
+                    // log & send
                     this.UnifiedLog(response, LogType.Green);
                     await message.Channel.SendMessageAsync(response);
                 };
 
+            // send response but with a file!
             Action<Stream, string, string> sendResponseFile =
                 async (Stream stream, string filename, string response) =>
                 {
+                    // wrap response
                     response = this.WrapResponse(response);
 
+                    // log and send with file
                     this.UnifiedLog(response, LogType.Green);
                     await message.Channel.SendFileAsync(stream, filename, response);
 
@@ -175,10 +183,13 @@
                     stream = null;
                 };
 
+            // iterate all handlers
             foreach (var handler in this.Handlers)
             {
+                // attempt to verify, if valid the handler will do what it needs to do and return true
                 var result = handler.Verify(command, parameter, sendResponse, sendResponseFile);
 
+                // if the handler returned true then we don't need to continue
                 if (result)
                 {
                     return;

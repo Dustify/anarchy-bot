@@ -5,10 +5,13 @@
     using System.IO;
     using System.Net;
 
+    // whois handler
     public class Whois : HandlerBase
     {
+        // webclient for retrieving foshizzle
         private WebClient webClient = new WebClient();
 
+        // command name
         public override string Command
         {
             get
@@ -17,6 +20,7 @@
             }
         }
 
+        // we need a parameter (the character name)
         public override bool NeedsParameter
         {
             get
@@ -25,6 +29,7 @@
             }
         }
 
+        // process method
         public override void Process(string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
         {
             // store response in single object /////optimisatiooooonnnnnnn//////
@@ -38,6 +43,7 @@
             if (result == "null")
             {
                 // the web api returns the text 'null' if it can't find the character you requested
+                // let the user know they've done something silly
                 sendResponse(string.Format("Couldn't find character '{0}'.", parameter));
 
                 return;
@@ -94,6 +100,7 @@
             // remove double spaces from response, this might happen if the character doesn't have a first / last name
             response = response.Replace("  ", " ").Trim();
             
+            // send the response
             sendResponseFile(headStream, "head.jpg", response);
             
             // stop
