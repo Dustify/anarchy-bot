@@ -27,9 +27,20 @@
 
         public Manager()
         {
-            // add handlers to collection, this could be automated with reflection
-            this.Handlers.Add(new Help());
-            this.Handlers.Add(new Whois());
+            // add handlers to collection, automated with reflection
+            var assembly = System.Reflection.Assembly.GetCallingAssembly();
+            var types = assembly.GetTypes();
+
+            foreach(var type in types)
+            {
+                if (type.BaseType.FullName == "AnarchyBot.Handlers.HandlerBase")
+                {
+                    var constructor = type.GetConstructor(new Type[] { });
+                    var instance = constructor.Invoke(new object[] { });
+
+                    this.Handlers.Add((HandlerBase)instance);
+                }
+            }
 
             // let's get this show on the road
             this.MainAsync().GetAwaiter().GetResult();
