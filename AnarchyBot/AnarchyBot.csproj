@@ -85,6 +85,7 @@
     <Compile Include="Handlers\HandlerBase.cs" />
     <Compile Include="Handlers\Help.cs" />
     <Compile Include="Handlers\Level.cs" />
+    <Compile Include="Handlers\Oe.cs" />
     <Compile Include="Handlers\Whois.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Program.cs" />
