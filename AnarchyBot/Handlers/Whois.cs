@@ -66,10 +66,12 @@
             // copy it into a memory stream
             var headStream = new MemoryStream(headData);
 
+            var alienLevel = (int)mainData.ALIENLEVEL;
+
             // add the general character info to the response
             response +=
                 string.Format(
-                    "{0} '{1}' {2} is a{3} {4} {5} {6} {7}, level {8}.",
+                    "{0} '{1}' {2} is a{3} {4} {5} {6} {7}, level {8} ({9}).",
                     mainData.FIRSTNAME,
                     mainData.NAME,
                     mainData.LASTNAME,
@@ -78,7 +80,17 @@
                     mainData.SEX,
                     mainData.BREED == "Nano" ? "Nanomage" : mainData.BREED, // might as well give them the proper name
                     mainData.PROF,
-                    mainData.LEVELX);
+                    mainData.LEVELX,
+                    mainData.PROFNAME);
+
+            if (alienLevel > 0)
+            {
+                response += 
+                    string.Format(
+                        " AI level {0} ({1}).",
+                        alienLevel,
+                        mainData.RANK_name);
+            }
 
             // 'cast' the org data
             IDictionary<string, Newtonsoft.Json.Linq.JToken> orgDataDictionary = orgData;
@@ -95,7 +107,7 @@
             }
 
             // add last updated and finish response
-            response += string.Format(" (Updated {0}).", updated);
+            response += string.Format(" Last updated {0}.", updated);
             
             // remove double spaces from response, this might happen if the character doesn't have a first / last name
             response = response.Replace("  ", " ").Trim();
