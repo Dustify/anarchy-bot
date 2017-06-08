@@ -66,7 +66,7 @@
             // login & 'start'
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
-
+            
             // apparently this is how we keep things running indefinitely now
             await Task.Delay(-1);
         }
