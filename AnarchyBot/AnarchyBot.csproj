@@ -82,6 +82,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatWrapper.cs" />
+    <Compile Include="DiscordWrapper.cs" />
     <Compile Include="Handlers\Leet.cs" />
     <Compile Include="Handlers\Cheetos.cs" />
     <Compile Include="Handlers\Beer.cs" />
@@ -100,6 +102,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\dimensions.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\levels.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

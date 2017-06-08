@@ -21,20 +21,20 @@ namespace AoLib.Net
         [XmlElement("dimension")]
         public Dimension[] Dimension;
 
-        public static Dimensions ParseXML( string path )
+        public static Dimensions ParseXML(string path)
         {
 
-            if ( ( path == string.Empty ) && File.Exists( "dimensions.xml" ) )
+            if ((path == string.Empty) && File.Exists("dimensions.xml"))
                 path = "dimensions.xml";
-            else if ( ( path == string.Empty ) &&
-                      File.Exists( "data" + Path.DirectorySeparatorChar +
-                                   "dimensions.xml" ) )
+            else if ((path == string.Empty) &&
+                      File.Exists("data" + Path.DirectorySeparatorChar +
+                                   "dimensions.xml"))
                 path = "data" + Path.DirectorySeparatorChar + "dimensions.xml";
 
-            if ( path == string.Empty )
+            if (path == string.Empty)
                 return new Dimensions();
 
-            using ( FileStream stream = File.OpenRead( path ) )
+            using (FileStream stream = File.OpenRead(path))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(Dimensions));
                 Dimensions Servers = (Dimensions)serializer.Deserialize(stream);
@@ -42,26 +42,26 @@ namespace AoLib.Net
             }
         }
 
-        public Int32 Server( string name )
+        public Int32 Server(string name)
         {
-            for ( int i = 0; i<this.Dimension.Length; i++ )
-                if ( this.Dimension[i].Name == name )
+            for (int i = 0; i < this.Dimension.Length; i++)
+                if (this.Dimension[i].Name == name)
                     return this.Dimension[i].ID;
             return -1;
         }
 
-        public string Address( Int32 ID )
+        public string Address(Int32 ID)
         {
-            for ( int i = 0; i<Dimension.Length; i++ )
-                if ( Dimension[i].ID == ID )
+            for (int i = 0; i < Dimension.Length; i++)
+                if (Dimension[i].ID == ID)
                     return Dimension[i].Address;
             return string.Empty;
         }
 
-        public Int32 Port( Int32 ID )
+        public Int32 Port(Int32 ID)
         {
-            for ( int i = 0; i<this.Dimension.Length; i++ )
-                if ( this.Dimension[i].ID == ID )
+            for (int i = 0; i < this.Dimension.Length; i++)
+                if (this.Dimension[i].ID == ID)
                     return this.Dimension[i].Port;
             return -1;
         }
@@ -69,7 +69,7 @@ namespace AoLib.Net
         public string[] Names()
         {
             string[] ServerNames = new string[this.Dimension.Length];
-            for ( Int32 i=0; i<this.Dimension.Length; i++ )
+            for (Int32 i = 0; i < this.Dimension.Length; i++)
                 ServerNames[i] = this.Dimension[i].Name;
             return ServerNames;
         }
@@ -95,14 +95,14 @@ namespace AoLib.Net
     public class Server : Dimension
     {
 
-        public Server( string name )
+        public Server(string name)
         {
-            Dimensions Servers = Dimensions.ParseXML( string.Empty );
-            Int32 ID = Servers.Server( name );
-            this._id = Convert.ToString( ID );
+            Dimensions Servers = Dimensions.ParseXML(@"data\dimensions.xml");
+            Int32 ID = Servers.Server(name);
+            this._id = Convert.ToString(ID);
             this.Name = name;
-            this.Address = Servers.Address( ID );
-            this._port = Convert.ToString( Servers.Port( ID ) );
+            this.Address = Servers.Address(ID);
+            this._port = Convert.ToString(Servers.Port(ID));
         }
 
         public override string ToString()
@@ -110,36 +110,36 @@ namespace AoLib.Net
             return this.Name;
         }
 
-        public static explicit operator int( Server a )
+        public static explicit operator int(Server a)
         {
             return a.ID;
         }
 
-        public static explicit operator String( Server a )
+        public static explicit operator String(Server a)
         {
             return a.Name;
         }
 
         public override bool Equals(System.Object b)
         {
-            if ( b == null )
+            if (b == null)
                 return false;
 
             Server a = b as Server;
-            if ( (System.Object)a == null )
+            if ((System.Object)a == null)
                 return false;
 
-            if ( a.Name == this.Name )
+            if (a.Name == this.Name)
                 return true;
             return false;
         }
 
-        public bool Equals( Server b )
+        public bool Equals(Server b)
         {
-            if ( (object)b == null )
+            if ((object)b == null)
                 return false;
 
-            if ( this.Name == b.Name )
+            if (this.Name == b.Name)
                 return true;
             return false;
         }
@@ -149,46 +149,46 @@ namespace AoLib.Net
             return this.ID;
         }
 
-    	public static bool operator ==( Server a, Server b )
+        public static bool operator ==(Server a, Server b)
         {
-            if ( a.Name == b.Name )
+            if (a.Name == b.Name)
                 return true;
             return false;
         }
 
-    	public static bool operator ==( Server a, int b )
+        public static bool operator ==(Server a, int b)
         {
-            if ( a.ID == b )
+            if (a.ID == b)
                 return true;
             return false;
         }
 
-    	public static bool operator ==( int a, Server b )
+        public static bool operator ==(int a, Server b)
         {
-            if ( a == b.ID )
+            if (a == b.ID)
                 return true;
             return false;
         }
 
-    	public static bool operator ==( Server a, string b )
+        public static bool operator ==(Server a, string b)
         {
-            if ( a.Name == b )
+            if (a.Name == b)
                 return true;
             return false;
         }
 
-    	public static bool operator ==( string a, Server b ) 
+        public static bool operator ==(string a, Server b)
         {
-            if ( a == b.Name )
+            if (a == b.Name)
                 return true;
             return false;
         }
 
-    	public static bool operator !=( Server a, Server b ) { return !( a == b ); }
-    	public static bool operator !=( Server a, int b ) { return !( a == b ); }
-    	public static bool operator !=( int a, Server b ) { return !( a == b ); }
-    	public static bool operator !=( Server a, string b ) { return !( a == b ); }
-    	public static bool operator !=( string a, Server b ) { return !( a == b ); }
+        public static bool operator !=(Server a, Server b) { return !(a == b); }
+        public static bool operator !=(Server a, int b) { return !(a == b); }
+        public static bool operator !=(int a, Server b) { return !(a == b); }
+        public static bool operator !=(Server a, string b) { return !(a == b); }
+        public static bool operator !=(string a, Server b) { return !(a == b); }
 
     }
 
@@ -363,8 +363,8 @@ namespace AoLib.Net
                     this._socket.Close();
                 }
                 this._lookupReset = new ManualResetEvent(false);
-                this._receiveThread = new Thread(RunReceiver) {IsBackground = true};
-                this._sendThread = new Thread(RunSender) {IsBackground = true};
+                this._receiveThread = new Thread(RunReceiver) { IsBackground = true };
+                this._sendThread = new Thread(RunSender) { IsBackground = true };
                 this._users = new Dictionary<UInt32, String>();
                 this._channels = new Dictionary<BigInteger, String>();
                 this._channelTypes = new Dictionary<BigInteger, ChannelType>();
@@ -373,21 +373,21 @@ namespace AoLib.Net
                 this._friendsOffline = new Dictionary<UInt32, DateTime>();
                 this._friendsPending = new List<UInt32>();
                 this._privateChannel = new Dictionary<UInt32, DateTime>();
-                this._fastQueue = new PacketQueue {delay = FastPacketDelay};
-                this._slowQueue = new PacketQueue {delay = SlowPacketDelay};
-                this._reconnectTimer = new System.Timers.Timer {AutoReset = false, Interval = ReconnectDelay};
+                this._fastQueue = new PacketQueue { delay = FastPacketDelay };
+                this._slowQueue = new PacketQueue { delay = SlowPacketDelay };
+                this._reconnectTimer = new System.Timers.Timer { AutoReset = false, Interval = ReconnectDelay };
                 this._reconnectTimer.Interval = this.ReconnectDelay;
                 this._reconnectTimer.Elapsed += new ElapsedEventHandler(OnReconnectEvent);
-                this._pingTimer = new System.Timers.Timer {Interval = PingInterval, AutoReset = true};
+                this._pingTimer = new System.Timers.Timer { Interval = PingInterval, AutoReset = true };
                 this._pingTimer.Interval = this.PingInterval;
                 this._pingTimer.Elapsed += new ElapsedEventHandler(OnPingTimerEvent);
                 this._lastPong = DateTime.Now;
 
                 if (string.IsNullOrEmpty(_serverAddress) || _port == 0)
                 {
-                    Dimensions dims = Dimensions.ParseXML( string.Empty );
-                    if( ( dims.Dimension != null ) &&
-                        ( dims.Dimension.Length > 0 ) )
+                    Dimensions dims = Dimensions.ParseXML(string.Empty);
+                    if ((dims.Dimension != null) &&
+                        (dims.Dimension.Length > 0))
                         this.Dimension = new Server(dims.Dimension[0].Name);
                 }
             }
@@ -459,7 +459,7 @@ namespace AoLib.Net
                 if (this._receiveThread.ThreadState == System.Threading.ThreadState.Running)
                 {
                     this._receiveThread.Abort();
-                    this._receiveThread.Join(new TimeSpan(0,0,5));
+                    this._receiveThread.Join(new TimeSpan(0, 0, 5));
                 }
                 this._receiveThread = null;
             }
@@ -872,7 +872,7 @@ namespace AoLib.Net
                     this._privateChannel[e.SenderID] = DateTime.Now;
                 else
                     if (this._privateChannel.ContainsKey(e.SenderID))
-                        this._privateChannel.Remove(e.SenderID);
+                    this._privateChannel.Remove(e.SenderID);
             }
 
             if (this.ClientJoinEvent != null)
@@ -1058,9 +1058,9 @@ namespace AoLib.Net
                     this._users.Add(character.ID, Format.UppercaseFirst(character.Name));
                 this._id = character.ID;
                 SimpleIdPacket packet = new SimpleIdPacket(Packet.Type.LOGIN_SELCHAR, character.ID)
-                    {
-                        Priority = PacketQueue.Priority.Urgent
-                    };
+                {
+                    Priority = PacketQueue.Priority.Urgent
+                };
                 this.SendPacket(packet);
                 this.Debug("Selecting character: " + this._character, "[Auth]");
                 this.OnStatusChangeEvent(new StatusChangeEventArgs(ChatState.CharacterSelect));
@@ -1361,7 +1361,7 @@ namespace AoLib.Net
         public virtual void SendChannelMessage(BigInteger channelID, string text, PacketQueue.Priority priority) { this.SendChannelMessage(channelID, text, priority, null); }
         public virtual void SendChannelMessage(BigInteger channelID, string text, PacketQueue.Priority priority, VoiceBlob voice)
         {
-            GroupMessagePacket p = new GroupMessagePacket(channelID, text, voice) {Priority = priority};
+            GroupMessagePacket p = new GroupMessagePacket(channelID, text, voice) { Priority = priority };
             this.SendPacket(p);
         }
 
@@ -1376,7 +1376,7 @@ namespace AoLib.Net
                 return;
 
             this.Debug("Adding user to friendslist: " + this.GetUserName(userID) + " (ID:" + userID + ")", "[Bot]");
-            BuddyStatusPacket p = new BuddyStatusPacket(userID, true, temp) {Priority = PacketQueue.Priority.Standard};
+            BuddyStatusPacket p = new BuddyStatusPacket(userID, true, temp) { Priority = PacketQueue.Priority.Standard };
 
             lock (this._friendsPending)
                 this._friendsPending.Add(userID);
@@ -1427,7 +1427,7 @@ namespace AoLib.Net
 
         public virtual void SendPrivateChannelKickAll()
         {
-            EmptyPacket p = new EmptyPacket(Packet.Type.PRIVGRP_KICKALL) {Priority = PacketQueue.Priority.Urgent};
+            EmptyPacket p = new EmptyPacket(Packet.Type.PRIVGRP_KICKALL) { Priority = PacketQueue.Priority.Urgent };
             this.SendPacket(p);
         }
 
@@ -1447,7 +1447,7 @@ namespace AoLib.Net
         {
             if (userID == this._id)
                 return;
-            TellPacket p = new TellPacket(userID, text, voice) {Priority = priority};
+            TellPacket p = new TellPacket(userID, text, voice) { Priority = priority };
             this.SendPacket(p);
         }
 
@@ -1457,14 +1457,14 @@ namespace AoLib.Net
                 if (this._users.ContainsValue(Format.UppercaseFirst(name)))
                     return;
 
-            NameLookupPacket p = new NameLookupPacket(name) {Priority = PacketQueue.Priority.Urgent};
+            NameLookupPacket p = new NameLookupPacket(name) { Priority = PacketQueue.Priority.Urgent };
             this.Debug("Requesting ID: " + name, "[Database]");
             this.SendPacket(p);
         }
 
         public virtual void SendPing()
         {
-            EmptyPacket p = new EmptyPacket(Packet.Type.PING) {Priority = PacketQueue.Priority.Urgent};
+            EmptyPacket p = new EmptyPacket(Packet.Type.PING) { Priority = PacketQueue.Priority.Urgent };
             this.SendPacket(p);
         }
         #endregion
