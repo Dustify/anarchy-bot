@@ -1,26 +1,17 @@
 ﻿namespace AnarchyBot.Handlers
 {
+    using Discord.WebSocket;
     using System;
     using System.IO;
     using System.Xml;
 
     public class Level : HandlerBase
     {
-        public override string Command
-        {
-            get
-            {
-                return "level";
-            }
-        }
+        public override string Command => "level";
 
-        public override bool NeedsParameter
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool NeedsParameter => true;
+
+        public override string HelpText => "- Get level info";
 
         public XmlDocument LevelXml { get; private set; }
 
@@ -30,7 +21,7 @@
             this.LevelXml.Load(@".\Data\levels.xml");
         }
 
-        public override void Process(string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
         {
             int level = 0;
             int.TryParse(parameter, out level);

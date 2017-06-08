@@ -38,6 +38,11 @@
                     var constructor = type.GetConstructor(new Type[] { });
                     var instance = constructor.Invoke(new object[] { });
 
+                    if (instance is Help)
+                    {
+                        ((Help)instance).Handlers = this.Handlers;
+                    }
+
                     this.Handlers.Add((HandlerBase)instance);
                 }
             }
@@ -198,7 +203,7 @@
             foreach (var handler in this.Handlers)
             {
                 // attempt to verify, if valid the handler will do what it needs to do and return true
-                var result = handler.Verify(command, parameter, sendResponse, sendResponseFile);
+                var result = handler.Verify(message, command, parameter, sendResponse, sendResponseFile);
 
                 // if the handler returned true then we don't need to continue
                 if (result)

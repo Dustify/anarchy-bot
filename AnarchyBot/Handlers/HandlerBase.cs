@@ -1,5 +1,6 @@
 ﻿namespace AnarchyBot.Handlers
 {
+    using Discord.WebSocket;
     using System;
     using System.IO;
 
@@ -7,7 +8,7 @@
     public abstract class HandlerBase
     {
         // verify method confirms that this is the correct handler for the command and executes as required
-        public bool Verify(string command, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        public bool Verify(SocketMessage message, string command, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
         {
             // make sure the command name matches
             if (!command.Equals(this.Command, StringComparison.InvariantCultureIgnoreCase))
@@ -22,19 +23,21 @@
             }
 
             // if we've made it this far we can process the handler
-            this.Process(parameter, sendResponse, sendResponseFile);
+            this.Process(message, parameter, sendResponse, sendResponseFile);
 
             // let the manager know that we were successful
             return true;
         }
 
         // abstract method for the 'do' code
-        public abstract void Process(string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile);
+        public abstract void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile);
 
         // the command name
         public abstract string Command { get; }
 
         // whether or not the handler needs a parameter
         public abstract bool NeedsParameter { get; }
+
+        public abstract string HelpText { get; }
     }
 }

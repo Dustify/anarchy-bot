@@ -1,5 +1,6 @@
 ﻿namespace AnarchyBot.Handlers
 {
+    using Discord.WebSocket;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -12,25 +13,15 @@
         private WebClient webClient = new WebClient();
 
         // command name
-        public override string Command
-        {
-            get
-            {
-                return "whois";
-            }
-        }
-
+        public override string Command => "whois";
+            
         // we need a parameter (the character name)
-        public override bool NeedsParameter
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool NeedsParameter => true;
+
+        public override string HelpText => "[name] Get character info";
 
         // process method
-        public override void Process(string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
         {
             // store response in single object /////optimisatiooooonnnnnnn//////
             var response = string.Empty;

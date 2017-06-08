@@ -82,6 +82,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handlers\Leet.cs" />
+    <Compile Include="Handlers\Cheetos.cs" />
+    <Compile Include="Handlers\Beer.cs" />
     <Compile Include="Handlers\HandlerBase.cs" />
     <Compile Include="Handlers\Help.cs" />
     <Compile Include="Handlers\Level.cs" />

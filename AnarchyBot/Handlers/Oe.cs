@@ -1,5 +1,6 @@
 ﻿namespace AnarchyBot.Handlers
 {
+    using Discord.WebSocket;
     using System;
     using System.IO;
 
@@ -7,9 +8,11 @@
     {
         public override string Command => "oe";
 
+        public override string HelpText => "[skill level] - Check skill over-equipping";
+
         public override bool NeedsParameter => true;
 
-        public override void Process(string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
         {
             var level = default(int);
             var parseSuccess = int.TryParse(parameter, out level);
