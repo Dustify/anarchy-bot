@@ -18,7 +18,7 @@ namespace AnarchyBot.Handlers
                 "Beer! Let's get this party started {0}!!",
                 "WTF ass munch, you stole my beer and my girl!",
                 "A round of beer coming up courtesy of {0}",
-                "/me sneaks up and smashes a bottle over {0}'s head doing 5821 points of melee damage!",
+                "AnarchyBot sneaks up and smashes a bottle over {0}'s head doing 5821 points of melee damage!",
                 "Have one on the house {0} and tell me all your problems",
                 "Sure, I would love to drink a few. Your place or mine?",
                 "Import or Domestic?",
