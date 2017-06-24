@@ -50,7 +50,7 @@
                     this.Handlers.Add((HandlerBase)instance);
                 }
             }
-            
+
             this.Begin();
         }
 
@@ -64,10 +64,54 @@
             // wire events
             client.Log += this.Log;
             client.MessageReceived += this.MessageReceived;
+            client.GuildMemberUpdated += this.GuildMemberUpdated;
 
             // login & 'start'
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
+        }
+
+        // let's check to see if the user just started streaming
+        private Task GuildMemberUpdated(SocketGuildUser oldState, SocketGuildUser newState)
+        {
+            var oldGame = oldState.Game;
+            var newGame = newState.Game;
+
+            // if new game doesn't exist we're not interested
+            if (!newGame.HasValue)
+            {
+                return Task.CompletedTask;
+            }
+
+            // if old game was already streaming we're not interested
+            if (oldGame.HasValue && !string.IsNullOrWhiteSpace(oldGame.Value.StreamUrl))
+            {
+                return Task.CompletedTask;
+            }
+
+            // at this point if the new game has a stream url we can assume the user just started streaming
+            if (!string.IsNullOrWhiteSpace(newGame.Value.StreamUrl))
+            {
+                var streamUrl = newGame.Value.StreamUrl;
+                var gameName = newGame.Value.Name;
+
+                var message = string.Format("{0} just started streaming", newState.Username);
+
+                if (!string.IsNullOrEmpty(gameName))
+                {
+                    message += " " + gameName;
+                }
+
+                message += ". ";
+                
+                message = this.WrapResponse(message);
+                message += streamUrl;
+
+                this.Manager.UnifiedLog(string.Format("{0}/{1} {2}", newState.Guild.Name, newState.Guild.DefaultChannel.Name, message), LogType.Green);
+                newState.Guild.DefaultChannel.SendMessageAsync(message);
+            }
+
+            return Task.CompletedTask;
         }
 
         // discord library's native logging thing
@@ -79,7 +123,6 @@
             // return this because it needs it for whatever reason
             return Task.CompletedTask;
         }
-
 
         // generic regex that will allow '!something' or '!something param' and not much else
         private Regex generalRegex = new Regex(@"^!([\w\d]*)\s{0,1}([\w\d]*)$");
