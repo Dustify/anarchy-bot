@@ -92,21 +92,29 @@
             // at this point if the new game has a stream url we can assume the user just started streaming
             if (!string.IsNullOrWhiteSpace(newGame.Value.StreamUrl))
             {
+                // grab useful stuff
                 var streamUrl = newGame.Value.StreamUrl;
                 var gameName = newGame.Value.Name;
 
+                // format basic message
                 var message = string.Format("{0} just started streaming", newState.Username);
 
+                // if we know the name of the game then add it
                 if (!string.IsNullOrEmpty(gameName))
                 {
                     message += " " + gameName;
                 }
 
-                message += ". ";
+                // punctuation is nice
+                message += ".";
                 
+                // wrap in standard response 
                 message = this.WrapResponse(message);
-                message += streamUrl;
 
+                // add a newline for appearance and add stream URL.
+                message += "\n" + streamUrl;
+
+                // send
                 this.Manager.UnifiedLog(string.Format("{0}/{1} {2}", newState.Guild.Name, newState.Guild.DefaultChannel.Name, message), LogType.Green);
                 newState.Guild.DefaultChannel.SendMessageAsync(message);
             }
