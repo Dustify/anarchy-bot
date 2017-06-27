@@ -53,7 +53,7 @@
 
             this.Begin();
         }
-
+        
         private async void Begin()
         {
             // we're expecting to see 'token.txt' in the same directory as the executable, this file should only contain the discord app bot token thing
@@ -65,11 +65,13 @@
             client.Log += this.Log;
             client.MessageReceived += this.MessageReceived;
             client.GuildMemberUpdated += this.GuildMemberUpdated;
-
+            
             // login & 'start'
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
         }
+
+        private Regex streamRegex = new Regex(@"^ao$|ao | ao| anarchy|anarchy |^anarchy$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
         // let's check to see if the user just started streaming
         private Task GuildMemberUpdated(SocketGuildUser oldState, SocketGuildUser newState)
@@ -77,12 +79,12 @@
             var oldGame = oldState.Game;
             var newGame = newState.Game;
 
-            // if new game doesn't exist we're not interested
-            if (!newGame.HasValue)
+            // if new game doesn't exist or does exist but doesn't have a title or does have a title but doesn't match regex we're not interested
+            if (!newGame.HasValue || string.IsNullOrEmpty(newGame.Value.Name) || !streamRegex.IsMatch(newGame.Value.Name))
             {
                 return Task.CompletedTask;
             }
-
+            
             // if old game was already streaming we're not interested
             if (oldGame.HasValue && !string.IsNullOrWhiteSpace(oldGame.Value.StreamUrl))
             {
