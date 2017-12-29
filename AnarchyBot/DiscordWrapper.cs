@@ -64,66 +64,12 @@
             // wire events
             client.Log += this.Log;
             client.MessageReceived += this.MessageReceived;
-            client.GuildMemberUpdated += this.GuildMemberUpdated;
             
             // login & 'start'
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
         }
-
-        private Regex streamRegex = new Regex(@"^ao$|ao | ao| anarchy|anarchy |^anarchy$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-
-        // let's check to see if the user just started streaming
-        private Task GuildMemberUpdated(SocketGuildUser oldState, SocketGuildUser newState)
-        {
-            var oldGame = oldState.Game;
-            var newGame = newState.Game;
-
-            // if new game doesn't exist or does exist but doesn't have a title or does have a title but doesn't match regex we're not interested
-            if (!newGame.HasValue || string.IsNullOrEmpty(newGame.Value.Name) || !streamRegex.IsMatch(newGame.Value.Name))
-            {
-                return Task.CompletedTask;
-            }
-            
-            // if old game was already streaming we're not interested
-            if (oldGame.HasValue && !string.IsNullOrWhiteSpace(oldGame.Value.StreamUrl))
-            {
-                return Task.CompletedTask;
-            }
-
-            // at this point if the new game has a stream url we can assume the user just started streaming
-            if (!string.IsNullOrWhiteSpace(newGame.Value.StreamUrl))
-            {
-                // grab useful stuff
-                var streamUrl = newGame.Value.StreamUrl;
-                var gameName = newGame.Value.Name;
-
-                // format basic message
-                var message = string.Format("{0} just started streaming", newState.Username);
-
-                // if we know the name of the game then add it
-                if (!string.IsNullOrEmpty(gameName))
-                {
-                    message += " " + gameName;
-                }
-
-                // punctuation is nice
-                message += ".";
-                
-                // wrap in standard response 
-                message = this.WrapResponse(message);
-
-                // add a newline for appearance and add stream URL.
-                message += "\n" + streamUrl;
-
-                // send
-                this.Manager.UnifiedLog(string.Format("{0}/{1} {2}", newState.Guild.Name, newState.Guild.DefaultChannel.Name, message), LogType.Green);
-                newState.Guild.DefaultChannel.SendMessageAsync(message);
-            }
-
-            return Task.CompletedTask;
-        }
-
+        
         // discord library's native logging thing
         private Task Log(LogMessage message)
         {
