@@ -25,7 +25,6 @@
         public async Task MainAsync()
         {
             new DiscordWrapper(this);
-            new ChatWrapper(this);
             
             // apparently this is how we keep things running indefinitely now
             await Task.Delay(-1);

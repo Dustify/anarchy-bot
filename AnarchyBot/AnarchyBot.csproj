@@ -91,7 +91,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChatWrapper.cs" />
     <Compile Include="DiscordWrapper.cs" />
     <Compile Include="Handlers\Leet.cs" />
     <Compile Include="Handlers\Cheetos.cs" />
@@ -121,12 +120,6 @@
     <Content Include="Data\levels.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AoLib\AoLib.csproj">
-      <Project>{d1f26da9-8b99-4663-923b-2c4209b4f625}</Project>
-      <Name>AoLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\netstandard2.0\NETStandard.Library.targets')" />
