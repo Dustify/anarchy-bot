@@ -60,22 +60,25 @@
             this.Client.Log += this.Log;
             this.Client.MessageReceived += this.MessageReceived;
 
-            this.Begin();   
+            this.Begin();
         }
 
         private async Task Client_Disconnected(Exception arg)
         {
-            this.Manager.UnifiedLog("Disconnected", LogType.Red);
+            while (this.Client.ConnectionState == ConnectionState.Disconnected)
+            {
+                this.Manager.UnifiedLog("Disconnected, waiting 30 seconds", LogType.Red);
 
-            await Task.Delay(5000);
-            this.Begin();
+                await Task.Delay(30000);
+                this.Begin();
+            }
         }
 
         private async void Begin()
         {
             // we're expecting to see 'token.txt' in the same directory as the executable, this file should only contain the discord app bot token thing
             var token = File.ReadAllText("token.txt").Trim();
-            
+
             // login & 'start'
             await this.Client.LoginAsync(TokenType.Bot, token);
             await this.Client.StartAsync();
@@ -113,7 +116,7 @@
             var request = message.Content;
 
             // log reception of message
-            this.Manager.UnifiedLog(identifier + request, LogType.Grey);
+            this.Manager.UnifiedLog($"{identifier} {request}", LogType.Grey);
 
             // try a regex match
             var match = this.generalRegex.Match(request);
