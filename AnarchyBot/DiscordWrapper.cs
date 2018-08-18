@@ -27,6 +27,8 @@
 
         public Manager Manager { get; private set; }
 
+        public DiscordSocketClient Client { get; }
+
         public DiscordWrapper(Manager manager)
         {
             this.Manager = manager;
@@ -51,6 +53,21 @@
                 }
             }
 
+            this.Client = new DiscordSocketClient();
+
+            // wire events
+            this.Client.Disconnected += Client_Disconnected;
+            this.Client.Log += this.Log;
+            this.Client.MessageReceived += this.MessageReceived;
+
+            this.Begin();   
+        }
+
+        private async Task Client_Disconnected(Exception arg)
+        {
+            this.Manager.UnifiedLog("Disconnected", LogType.Red);
+
+            await Task.Delay(5000);
             this.Begin();
         }
 
@@ -58,16 +75,10 @@
         {
             // we're expecting to see 'token.txt' in the same directory as the executable, this file should only contain the discord app bot token thing
             var token = File.ReadAllText("token.txt").Trim();
-
-            // instantiate discord client object
-            var client = new DiscordSocketClient();
-            // wire events
-            client.Log += this.Log;
-            client.MessageReceived += this.MessageReceived;
-
+            
             // login & 'start'
-            await client.LoginAsync(TokenType.Bot, token);
-            await client.StartAsync();
+            await this.Client.LoginAsync(TokenType.Bot, token);
+            await this.Client.StartAsync();
         }
 
         // discord library's native logging thing
