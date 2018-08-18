@@ -53,7 +53,7 @@
 
             this.Begin();
         }
-        
+
         private async void Begin()
         {
             // we're expecting to see 'token.txt' in the same directory as the executable, this file should only contain the discord app bot token thing
@@ -64,12 +64,12 @@
             // wire events
             client.Log += this.Log;
             client.MessageReceived += this.MessageReceived;
-            
+
             // login & 'start'
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
         }
-        
+
         // discord library's native logging thing
         private Task Log(LogMessage message)
         {
@@ -88,12 +88,15 @@
         // discord library message received handler
         private async Task MessageReceived(SocketMessage message)
         {
+            var server = "Direct";
+
+            if (message.Channel is SocketGuildChannel)
+            {
+                server = ((SocketGuildChannel)message.Channel).Guild.Name;
+            }
+
             // generate channel and user identification, is server in there somewhere as well?
-            var identifier =
-                string.Format(
-                    "{0}/{1} ",
-                    message.Channel.Name,
-                    message.Author.Username);
+            var identifier = $"{server}/{message.Channel.Name}/{message.Author.Username}";
 
             // store the message text
             var request = message.Content;
