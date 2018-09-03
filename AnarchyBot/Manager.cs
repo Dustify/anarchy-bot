@@ -20,16 +20,26 @@
             // let's get this show on the road
             this.MainAsync().GetAwaiter().GetResult();
         }
-        
+
+        public DiscordWrapper DiscordWrapper { get; private set; }
+
         // main wrapper
         public async Task MainAsync()
         {
-            new DiscordWrapper(this);
-            
-            // apparently this is how we keep things running indefinitely now
-            await Task.Delay(-1);
+            this.DiscordWrapper = new DiscordWrapper(this);
+
+            while (true)
+            {
+                await Task.Delay(60000);
+
+                if (this.DiscordWrapper.Client.ConnectionState == Discord.ConnectionState.Disconnected)
+                {
+                    this.UnifiedLog("Detected Discord client disconnection, reinitialising...", LogType.Yellow);
+                    this.DiscordWrapper = new DiscordWrapper(this);
+                }
+            }
         }
-        
+
         // locking object, because im oldschool / lazy like that
         private static object LogLock = new object();
 

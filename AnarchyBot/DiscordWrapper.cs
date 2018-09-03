@@ -56,22 +56,10 @@
             this.Client = new DiscordSocketClient();
 
             // wire events
-            this.Client.Disconnected += Client_Disconnected;
             this.Client.Log += this.Log;
             this.Client.MessageReceived += this.MessageReceived;
 
             this.Begin();
-        }
-
-        private async Task Client_Disconnected(Exception arg)
-        {
-            while (this.Client.ConnectionState == ConnectionState.Disconnected)
-            {
-                this.Manager.UnifiedLog("Disconnected, waiting 30 seconds", LogType.Red);
-
-                await Task.Delay(30000);
-                this.Begin();
-            }
         }
 
         private async void Begin()
