@@ -68,8 +68,15 @@
             var token = File.ReadAllText("token.txt").Trim();
 
             // login & 'start'
-            await this.Client.LoginAsync(TokenType.Bot, token);
-            await this.Client.StartAsync();
+            try
+            {
+                await this.Client.LoginAsync(TokenType.Bot, token);
+                await this.Client.StartAsync();
+            }
+            catch (Exception exception)
+            {
+                this.Manager.UnifiedLog($"Error starting discord client: {exception.Message}", LogType.Red);
+            }
         }
 
         // discord library's native logging thing

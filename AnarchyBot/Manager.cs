@@ -26,18 +26,26 @@
         // main wrapper
         public async Task MainAsync()
         {
+            //while (true)
+            //{
+            //    try
+            //    {
+            //        if (this.DiscordWrapper == default(DiscordWrapper) || this.DiscordWrapper.Client.ConnectionState == Discord.ConnectionState.Disconnected)
+            //        {
+            //            this.UnifiedLog("Discord client not connected, (re)initialising...", LogType.Yellow);
+            //            this.DiscordWrapper = new DiscordWrapper(this);
+            //        }
+            //    }
+            //    catch (Exception exception)
+            //    {
+            //        this.UnifiedLog($"Error initialising Discord client, trying again in 60 seconds: {exception.Message}", LogType.Red);
+            //    }
+
+            //    await Task.Delay(60000);
+            //}
+
             this.DiscordWrapper = new DiscordWrapper(this);
-
-            while (true)
-            {
-                await Task.Delay(60000);
-
-                if (this.DiscordWrapper.Client.ConnectionState == Discord.ConnectionState.Disconnected)
-                {
-                    this.UnifiedLog("Detected Discord client disconnection, reinitialising...", LogType.Yellow);
-                    this.DiscordWrapper = new DiscordWrapper(this);
-                }
-            }
+            await Task.Delay(-1);
         }
 
         // locking object, because im oldschool / lazy like that
