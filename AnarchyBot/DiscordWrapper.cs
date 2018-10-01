@@ -27,7 +27,11 @@
 
         public Manager Manager { get; private set; }
 
-        public DiscordSocketClient Client { get; }
+        public DiscordSocketClient Client { get; private set; }
+
+        public bool IsDisconnected =>
+            this.Client == default(DiscordSocketClient) ||
+            this.Client.ConnectionState == ConnectionState.Disconnected;
 
         public DiscordWrapper(Manager manager)
         {
@@ -59,7 +63,18 @@
             this.Client.Log += this.Log;
             this.Client.MessageReceived += this.MessageReceived;
 
+            this.Client.Disconnected += this.ClientDisconnected;
+
             this.Begin();
+        }
+
+        private async Task ClientDisconnected(Exception arg)
+        {
+            this.Manager.UnifiedLog("Disconnection event", LogType.Yellow);
+
+            await this.Client.StopAsync();
+            this.Client.Dispose();
+            this.Client = null;
         }
 
         private async void Begin()

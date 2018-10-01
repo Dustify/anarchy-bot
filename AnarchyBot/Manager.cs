@@ -1,5 +1,7 @@
 ﻿namespace AnarchyBot
 {
+    using Discord;
+    using Discord.WebSocket;
     using System;
     using System.IO;
     using System.Threading.Tasks;
@@ -26,26 +28,26 @@
         // main wrapper
         public async Task MainAsync()
         {
-            //while (true)
-            //{
-            //    try
-            //    {
-            //        if (this.DiscordWrapper == default(DiscordWrapper) || this.DiscordWrapper.Client.ConnectionState == Discord.ConnectionState.Disconnected)
-            //        {
-            //            this.UnifiedLog("Discord client not connected, (re)initialising...", LogType.Yellow);
-            //            this.DiscordWrapper = new DiscordWrapper(this);
-            //        }
-            //    }
-            //    catch (Exception exception)
-            //    {
-            //        this.UnifiedLog($"Error initialising Discord client, trying again in 60 seconds: {exception.Message}", LogType.Red);
-            //    }
+            while (true)
+            {
+                try
+                {
+                    if (this.DiscordWrapper == default(DiscordWrapper) || this.DiscordWrapper.IsDisconnected)
+                    {
+                        this.UnifiedLog("Discord client not connected, (re)initialising...", LogType.Yellow);
+                        this.DiscordWrapper = new DiscordWrapper(this);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    this.UnifiedLog($"Error initialising Discord client, trying again in 60 seconds: {exception.Message}", LogType.Red);
+                }
 
-            //    await Task.Delay(60000);
-            //}
+                await Task.Delay(30000);
+            }
 
-            this.DiscordWrapper = new DiscordWrapper(this);
-            await Task.Delay(-1);
+            //this.DiscordWrapper = new DiscordWrapper(this);
+            //await Task.Delay(-1);
         }
 
         // locking object, because im oldschool / lazy like that
