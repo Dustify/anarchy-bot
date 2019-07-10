@@ -14,20 +14,16 @@
 
         // command name
         public override string Command => "whois";
-            
+
         // we need a parameter (the character name)
         public override bool NeedsParameter => true;
 
         public override string HelpText => "[name] Get character info";
 
-        // process method
-        public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        private void ProcessDimension(int dimension, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
         {
-            // store response in single object /////optimisatiooooonnnnnnn//////
-            var response = string.Empty;
-
             // generate character info request url, json please
-            var requestUrl = string.Format("http://people.anarchy-online.com/character/bio/d/5/name/{0}/bio.xml?data_type=json", parameter);
+            var requestUrl = $"http://people.anarchy-online.com/character/bio/d/{dimension}/name/{parameter}/bio.xml?data_type=json";
             // get data using webclient
             var result = this.webClient.DownloadString(requestUrl);
 
@@ -35,7 +31,7 @@
             {
                 // the web api returns the text 'null' if it can't find the character you requested
                 // let the user know they've done something silly
-                sendResponse(string.Format("Couldn't find character '{0}'.", parameter));
+                sendResponse($"Dimension {dimension}: Couldn't find character '{parameter}'.");
 
                 return;
             }
@@ -51,7 +47,7 @@
             var updated = allData[2];
 
             // generate 'head' url
-            var headUrl = string.Format("http://cdn.funcom.com/billing_files/AO_shop/face/{0}.jpg", mainData.HEADID);
+            var headUrl = $"http://cdn.funcom.com/billing_files/AO_shop/face/{mainData.HEADID}.jpg";
             // download the jpeg
             var headData = this.webClient.DownloadData(headUrl);
             // copy it into a memory stream
@@ -60,6 +56,8 @@
             var alienLevel = (int)mainData.ALIENLEVEL;
 
             // add the general character info to the response
+            var response = $"Dimension {dimension}: ";
+
             response +=
                 string.Format(
                     "{0} '{1}' {2} is a{3} {4} {5} {6} {7}, level {8} ({9}).",
@@ -76,7 +74,7 @@
 
             if (alienLevel > 0)
             {
-                response += 
+                response +=
                     string.Format(
                         " AI level {0} ({1}).",
                         alienLevel,
@@ -98,14 +96,21 @@
             }
 
             // add last updated and finish response
-            response += string.Format(" Last updated {0}.", updated);
-            
+            response += $" Last updated {updated}.";
+
             // remove double spaces from response, this might happen if the character doesn't have a first / last name
             response = response.Replace("  ", " ").Trim();
-            
+
             // send the response
             sendResponseFile(headStream, "head.jpg", response);
-            
+        }
+
+        // process method
+        public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        {
+            this.ProcessDimension(5, parameter, sendResponse, sendResponseFile);
+            this.ProcessDimension(6, parameter, sendResponse, sendResponseFile);
+
             // stop
             return;
         }
