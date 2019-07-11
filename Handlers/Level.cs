@@ -18,7 +18,7 @@
         public Level()
         {
             this.LevelXml = new XmlDocument();
-            this.LevelXml.Load(@".\Data\levels.xml");
+            this.LevelXml.Load(@"Data/levels.xml");
         }
 
         public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
