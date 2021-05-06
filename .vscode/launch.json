@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/AnarchyBot.dll",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp5.0/AnarchyBot.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
