@@ -4,6 +4,6 @@
     <TargetFramework>netcoreapp5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="discord.net" Version="2.3.1" />
+    <PackageReference Include="discord.net" Version="2.4.0" />
   </ItemGroup>
 </Project>
