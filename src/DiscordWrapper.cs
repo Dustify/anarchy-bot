@@ -6,7 +6,6 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
@@ -65,7 +64,8 @@
 
             this.Client.Disconnected += this.ClientDisconnected;
 
-            this.Begin();
+            var task = this.Begin();
+            task.Wait();
         }
 
         private async Task ClientDisconnected(Exception arg)
@@ -77,7 +77,7 @@
             this.Client = null;
         }
 
-        private async void Begin()
+        private async Task Begin()
         {
             // we're expecting to see 'token.txt' in the same directory as the executable, this file should only contain the discord app bot token thing
             var token = File.ReadAllText("token.txt").Trim();
@@ -106,8 +106,6 @@
 
         // generic regex that will allow '!something' or '!something param' and not much else
         private Regex generalRegex = new Regex(@"^!([\w\d]*)\s{0,1}([\w\d]*)$");
-        // web client for retrieving character data / images
-        private WebClient webClient = new WebClient();
 
         // discord library message received handler
         private async Task MessageReceived(SocketMessage message)

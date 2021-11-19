@@ -1,7 +1,5 @@
 ﻿namespace AnarchyBot
 {
-    using Discord;
-    using Discord.WebSocket;
     using System;
     using System.IO;
     using System.Threading.Tasks;
@@ -20,7 +18,9 @@
         public Manager()
         {
             // let's get this show on the road
-            this.MainAsync().GetAwaiter().GetResult();
+            var wrapper = this.MainAsync();
+
+            wrapper.Wait();
         }
 
         public DiscordWrapper DiscordWrapper { get; private set; }
@@ -45,9 +45,6 @@
 
                 await Task.Delay(30000);
             }
-
-            //this.DiscordWrapper = new DiscordWrapper(this);
-            //await Task.Delay(-1);
         }
 
         // locking object, because im oldschool / lazy like that

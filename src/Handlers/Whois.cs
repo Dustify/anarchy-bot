@@ -5,12 +5,13 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Net.Http;
 
     // whois handler
     public class Whois : HandlerBase
     {
         // webclient for retrieving foshizzle
-        private WebClient webClient = new WebClient();
+        private HttpClient webClient = new HttpClient();
 
         // command name
         public override string Command => "whois";
@@ -20,12 +21,12 @@
 
         public override string HelpText => "[name] Get character info";
 
-        private void ProcessDimension(int dimension, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        private async void ProcessDimension(int dimension, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
         {
             // generate character info request url, json please
             var requestUrl = $"http://people.anarchy-online.com/character/bio/d/{dimension}/name/{parameter}/bio.xml?data_type=json";
             // get data using webclient
-            var result = this.webClient.DownloadString(requestUrl);
+            var result = await this.webClient.GetStringAsync(requestUrl);
 
             if (result == "null")
             {
@@ -49,7 +50,7 @@
             // generate 'head' url
             var headUrl = $"http://cdn.funcom.com/billing_files/AO_shop/face/{mainData.HEADID}.jpg";
             // download the jpeg
-            var headData = this.webClient.DownloadData(headUrl);
+            var headData = await this.webClient.GetByteArrayAsync(headUrl);
             // copy it into a memory stream
             var headStream = new MemoryStream(headData);
 
