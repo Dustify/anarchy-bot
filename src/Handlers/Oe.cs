@@ -1,8 +1,7 @@
 ﻿namespace AnarchyBot.Handlers
 {
-    using Discord.WebSocket;
     using System;
-    using System.IO;
+    using System.Threading.Tasks;
 
     public class Oe : HandlerBase
     {
@@ -10,12 +9,12 @@
 
         public override string HelpText => "[skill level] - Check skill over-equipping";
 
-        public override bool NeedsParameter => true;
+        protected override bool NeedsParameter => true;
 
-        public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        protected override async Task Process(HandlerRequest request)
         {
             var level = default(int);
-            var parseSuccess = int.TryParse(parameter, out level);
+            var parseSuccess = int.TryParse(request.Parameter, out level);
 
             if (!parseSuccess)
             {
@@ -27,7 +26,7 @@
 
             var result = string.Format("{0} > {1} > {2}", low, level, high);
 
-            sendResponse(result);
+            await this.SendResponse(request, result);
         }
     }
 }

@@ -11,16 +11,6 @@
 
     public class DiscordWrapper
     {
-        // reused response prefix & suffix
-        private const string ResponsePrefix = "```\nBleep bloop. ";
-        private const string ResponseSuffix = "\n```";
-
-        // wraps some text in the prefix & suffix
-        private string WrapResponse(string response)
-        {
-            return ResponsePrefix + response + ResponseSuffix;
-        }
-
         // store all handlers in a collection
         private List<HandlerBase> Handlers = new List<HandlerBase>();
 
@@ -121,13 +111,13 @@
             var identifier = $"{server}/{message.Channel.Name}/{message.Author.Username}";
 
             // store the message text
-            var request = message.Content;
+            var content = message.Content;
 
             // log reception of message
-            this.Manager.UnifiedLog($"{identifier} {request}", LogType.Grey);
+            this.Manager.UnifiedLog($"{identifier} {content}", LogType.Grey);
 
             // try a regex match
-            var match = this.generalRegex.Match(request);
+            var match = this.generalRegex.Match(content);
 
             if (!match.Success)
             {
@@ -139,39 +129,19 @@
             var command = match.Groups[1].Value;
             var parameter = match.Groups[2].Value;
 
-            // basic send response method, text only
-            Action<string> sendResponse =
-                async (string response) =>
-                {
-                    // wrap response
-                    response = this.WrapResponse(response);
-
-                    // log & send
-                    this.Manager.UnifiedLog(response, LogType.Green);
-                    await message.Channel.SendMessageAsync(response);
-                };
-
-            // send response but with a file!
-            Action<Stream, string, string> sendResponseFile =
-                async (Stream stream, string filename, string response) =>
-                {
-                    // wrap response
-                    response = this.WrapResponse(response);
-
-                    // log and send with file
-                    this.Manager.UnifiedLog(response, LogType.Green);
-                    await message.Channel.SendFileAsync(stream, filename, response);
-
-                    // dispose stream
-                    stream.Dispose();
-                    stream = null;
-                };
+            var request = new HandlerRequest
+            {
+                Command = command,
+                Parameter = parameter,
+                Manager = this.Manager,
+                Message = message
+            };
 
             // iterate all handlers
             foreach (var handler in this.Handlers)
             {
                 // attempt to verify, if valid the handler will do what it needs to do and return true
-                var result = handler.Verify(message, command, parameter, sendResponse, sendResponseFile);
+                var result = await handler.Verify(request);
 
                 // if the handler returned true then we don't need to continue
                 if (result)

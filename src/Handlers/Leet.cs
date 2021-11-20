@@ -1,20 +1,19 @@
 ﻿// with reference to: https://bitbucket.org/Vhab/vhabot/src/86697d44056cfb5a8f50e19ef00c70e66fa87c13/Plugins.Default/vh_Social.cs?at=default&fileviewer=file-view-default
 namespace AnarchyBot.Handlers
 {
-    using Discord.WebSocket;
     using System;
-    using System.IO;
+    using System.Threading.Tasks;
 
     public class Leet : HandlerBase
     {
         public override string Command => "leet";
 
-        public override bool NeedsParameter => false;
+        protected override bool NeedsParameter => false;
 
         public override string HelpText => "- Leet quotes";
 
-        public string[] Values => new string[] {
-               "joo suxxor",
+        protected string[] Values => new string[] {
+                "joo suxxor",
                 "ph4t l3wt",
                 "*drool*",
                 "peekay",
@@ -33,13 +32,13 @@ namespace AnarchyBot.Handlers
                 "stfu mofo"
             };
 
-        public Random R => new Random();
+        protected Random R => new Random();
 
-    public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        protected override async Task Process(HandlerRequest request)
         {
             var result = this.Values[this.R.Next(this.Values.Length)];
 
-            sendResponse(result);
+            await this.SendResponse(request, result);
         }
     }
 }

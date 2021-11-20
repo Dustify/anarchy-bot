@@ -1,19 +1,17 @@
 ﻿namespace AnarchyBot.Handlers
 {
-    using Discord.WebSocket;
-    using System;
-    using System.IO;
+    using System.Threading.Tasks;
     using System.Xml;
 
     public class Level : HandlerBase
     {
         public override string Command => "level";
 
-        public override bool NeedsParameter => true;
+        protected override bool NeedsParameter => true;
 
         public override string HelpText => "- Get level info";
 
-        public XmlDocument LevelXml { get; private set; }
+        protected XmlDocument LevelXml { get; private set; }
 
         public Level()
         {
@@ -21,10 +19,10 @@
             this.LevelXml.Load(@"Data/levels.xml");
         }
 
-        public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        protected override async Task Process(HandlerRequest request)
         {
             int level = 0;
-            int.TryParse(parameter, out level);
+            int.TryParse(request.Parameter, out level);
 
             if (level < 1 || level > 220)
             {
@@ -32,7 +30,7 @@
             }
 
             var levelNode = this.LevelXml.SelectSingleNode(string.Format("/data/entry[@level={0}]", level));
-            
+
             if (levelNode == null)
             {
                 return;
@@ -53,7 +51,7 @@
                     level > 200 ? "SK" : "XP",
                     levelNode.Attributes["missions"].Value);
 
-            sendResponse(response);
+            await this.SendResponse(request, response);
         }
     }
 }

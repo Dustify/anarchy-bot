@@ -1,11 +1,9 @@
 ﻿namespace AnarchyBot.Handlers
 {
-    using Discord.WebSocket;
-    using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Net;
     using System.Net.Http;
+    using System.Threading.Tasks;
 
     // whois handler
     public class Whois : HandlerBase
@@ -17,12 +15,14 @@
         public override string Command => "whois";
 
         // we need a parameter (the character name)
-        public override bool NeedsParameter => true;
+        protected override bool NeedsParameter => true;
 
         public override string HelpText => "[name] Get character info";
 
-        private async void ProcessDimension(int dimension, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        private async Task ProcessDimension(HandlerRequest request, int dimension)
         {
+            var parameter = request.Parameter;
+
             // generate character info request url, json please
             var requestUrl = $"http://people.anarchy-online.com/character/bio/d/{dimension}/name/{parameter}/bio.xml?data_type=json";
             // get data using webclient
@@ -32,7 +32,9 @@
             {
                 // the web api returns the text 'null' if it can't find the character you requested
                 // let the user know they've done something silly
-                sendResponse($"Dimension {dimension}: Couldn't find character '{parameter}'.");
+                await this.SendResponse(
+                    request,
+                    $"Dimension {dimension}: Couldn't find character '{parameter}'.");
 
                 return;
             }
@@ -103,14 +105,18 @@
             response = response.Replace("  ", " ").Trim();
 
             // send the response
-            sendResponseFile(headStream, "head.jpg", response);
+            await this.SendResponseFile(
+                request,
+                headStream,
+                "head.jpg",
+                response);
         }
 
         // process method
-        public override void Process(SocketMessage message, string parameter, Action<string> sendResponse, Action<Stream, string, string> sendResponseFile)
+        protected override async Task Process(HandlerRequest request)
         {
-            this.ProcessDimension(5, parameter, sendResponse, sendResponseFile);
-            this.ProcessDimension(6, parameter, sendResponse, sendResponseFile);
+            await this.ProcessDimension(request, 5);
+            await this.ProcessDimension(request, 6);
 
             // stop
             return;
