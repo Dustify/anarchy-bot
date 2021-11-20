@@ -13,8 +13,11 @@
             {
                 try
                 {
-                    // simply call the manager, we're expecting it to stop the thread from finishing
                     var manager = new Manager();
+
+                    // let's get this show on the road
+                    var task = manager.Execute();
+                    task.Wait();
                 }
                 catch (Exception exception)
                 {

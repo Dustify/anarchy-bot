@@ -6,6 +6,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
 
@@ -14,49 +15,11 @@
         // store all handlers in a collection
         private List<HandlerBase> Handlers = new List<HandlerBase>();
 
-        // public Manager Manager { get; private set; }
-
         public DiscordSocketClient Client { get; private set; }
 
         public bool IsDisconnected =>
             this.Client == default(DiscordSocketClient) ||
             this.Client.ConnectionState == ConnectionState.Disconnected;
-
-        public DiscordWrapper(Manager manager)
-        {
-            // this.Manager = manager;
-
-            // add handlers to collection, automated with reflection
-            var assembly = System.Reflection.Assembly.GetCallingAssembly();
-            var types = assembly.GetTypes();
-
-            foreach (var type in types)
-            {
-                if (type.BaseType.FullName == "AnarchyBot.Handlers.HandlerBase")
-                {
-                    var constructor = type.GetConstructor(new Type[] { });
-                    var instance = constructor.Invoke(new object[] { });
-
-                    if (instance is Help)
-                    {
-                        ((Help)instance).Handlers = this.Handlers;
-                    }
-
-                    this.Handlers.Add((HandlerBase)instance);
-                }
-            }
-
-            this.Client = new DiscordSocketClient();
-
-            // wire events
-            this.Client.Log += this.Log;
-            this.Client.MessageReceived += this.MessageReceived;
-
-            this.Client.Disconnected += this.ClientDisconnected;
-
-            var task = this.Begin();
-            task.Wait();
-        }
 
         private async Task ClientDisconnected(Exception arg)
         {
@@ -67,10 +30,46 @@
             this.Client = null;
         }
 
-        private async Task Begin()
+        public async Task Execute()
         {
-            // we're expecting to see 'token.txt' in the same directory as the executable, this file should only contain the discord app bot token thing
-            var token = File.ReadAllText("token.txt").Trim();
+            // add handlers to collection, automated with reflection
+            var assembly = System.Reflection.Assembly.GetEntryAssembly();
+            var types = assembly.GetTypes();
+
+            var filteredTypes = types.Where(x => x.BaseType != null && x.BaseType.FullName == "AnarchyBot.Handlers.HandlerBase");
+
+            foreach (var type in filteredTypes)
+            {
+                var constructor = type.GetConstructor(new Type[] { });
+                var instance = constructor.Invoke(new object[] { });
+
+                if (instance is Help)
+                {
+                    ((Help)instance).Handlers = this.Handlers;
+                }
+
+                this.Handlers.Add((HandlerBase)instance);
+            }
+
+            this.Client = new DiscordSocketClient();
+
+            // wire events
+            this.Client.Log += this.Log;
+            this.Client.MessageReceived += this.MessageReceived;
+
+            this.Client.Disconnected += this.ClientDisconnected;
+
+            var token = Environment.GetEnvironmentVariable("TOKEN");
+
+            if (File.Exists("token.txt"))
+            {
+                token = File.ReadAllText("token.txt").Trim();
+            }
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                throw new Exception("Token not supplied via 'token.txt' or 'TOKEN' environment variable");
+            }
 
             // login & 'start'
             try
