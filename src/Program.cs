@@ -21,7 +21,8 @@
                 }
                 catch (Exception exception)
                 {
-                    Console.WriteLine($"Unhandled exception: {exception.Message}, restarting in {RestartDelayMilliseconds}ms");
+                    Logger.Log(exception);
+
                     Thread.Sleep(RestartDelayMilliseconds);
                 }
             }

@@ -16,7 +16,7 @@
         public Level()
         {
             this.LevelXml = new XmlDocument();
-            this.LevelXml.Load(@"Data/levels.xml");
+            this.LevelXml.Load(@"./Data/levels.xml");
         }
 
         protected override async Task Process(HandlerRequest request)

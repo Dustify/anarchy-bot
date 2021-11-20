@@ -79,7 +79,7 @@
             }
             catch (Exception exception)
             {
-                Logger.Log($"Error starting discord client: {exception.Message}", LogType.Red);
+                Logger.Log(exception);
             }
         }
 

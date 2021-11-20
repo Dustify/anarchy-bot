@@ -17,12 +17,6 @@ namespace AnarchyBot
         // locking object, because im oldschool / lazy like that
         private static object LogLock = new object();
 
-        // 'colourless' log method
-        public static void Log(string message)
-        {
-            Log(message, LogType.Grey);
-        }
-
         // full log method
         public static void Log(string message, LogType logType)
         {
@@ -58,6 +52,23 @@ namespace AnarchyBot
 
                 // reset colour
                 Console.ForegroundColor = ConsoleColor.Gray;
+            }
+        }
+
+        // 'colourless' log method
+        public static void Log(string message)
+        {
+            Log(message, LogType.Grey);
+        }
+
+        public static void Log(Exception exception)
+        {
+            var currentException = exception;
+
+            while (currentException != null)
+            {
+                Log($"{currentException.Message}\n{currentException.StackTrace}", LogType.Red);
+                currentException = currentException.InnerException;
             }
         }
     }

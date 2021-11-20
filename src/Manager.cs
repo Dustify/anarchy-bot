@@ -26,7 +26,7 @@
                 }
                 catch (Exception exception)
                 {
-                    Logger.Log($"Error initialising Discord client: {exception.Message}", LogType.Red);
+                    Logger.Log(exception);
                 }
 
                 await Task.Delay(RetryTime);
