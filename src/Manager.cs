@@ -5,7 +5,7 @@
 
     public class Manager
     {
-        public const int RetryTime = 30000;
+        public const int RetryTime = 1000;
 
         public DiscordWrapper DiscordWrapper { get; private set; }
 
