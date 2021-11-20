@@ -24,7 +24,7 @@
             response = this.WrapResponse(response);
 
             // log & send
-            request.Manager.UnifiedLog(response, LogType.Green);
+            Logger.Log(response, LogType.Green);
             await request.Message.Channel.SendMessageAsync(response);
         }
 
@@ -35,7 +35,7 @@
             response = this.WrapResponse(response);
 
             // log and send with file
-            request.Manager.UnifiedLog(response, LogType.Green);
+            Logger.Log(response, LogType.Green);
             await request.Message.Channel.SendFileAsync(stream, filename, response);
 
             // dispose stream

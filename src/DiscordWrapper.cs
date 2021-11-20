@@ -14,7 +14,7 @@
         // store all handlers in a collection
         private List<HandlerBase> Handlers = new List<HandlerBase>();
 
-        public Manager Manager { get; private set; }
+        // public Manager Manager { get; private set; }
 
         public DiscordSocketClient Client { get; private set; }
 
@@ -24,7 +24,7 @@
 
         public DiscordWrapper(Manager manager)
         {
-            this.Manager = manager;
+            // this.Manager = manager;
 
             // add handlers to collection, automated with reflection
             var assembly = System.Reflection.Assembly.GetCallingAssembly();
@@ -60,7 +60,7 @@
 
         private async Task ClientDisconnected(Exception arg)
         {
-            this.Manager.UnifiedLog("Disconnection event", LogType.Yellow);
+            Logger.Log("Disconnection event", LogType.Yellow);
 
             await this.Client.StopAsync();
             this.Client.Dispose();
@@ -80,7 +80,7 @@
             }
             catch (Exception exception)
             {
-                this.Manager.UnifiedLog($"Error starting discord client: {exception.Message}", LogType.Red);
+                Logger.Log($"Error starting discord client: {exception.Message}", LogType.Red);
             }
         }
 
@@ -88,7 +88,7 @@
         private Task Log(LogMessage message)
         {
             // just send message to our logging
-            this.Manager.UnifiedLog(message.ToString());
+            Logger.Log(message.ToString());
 
             // return this because it needs it for whatever reason
             return Task.CompletedTask;
@@ -114,7 +114,7 @@
             var content = message.Content;
 
             // log reception of message
-            this.Manager.UnifiedLog($"{identifier} {content}", LogType.Grey);
+            Logger.Log($"{identifier} {content}", LogType.Grey);
 
             // try a regex match
             var match = this.generalRegex.Match(content);
@@ -133,7 +133,6 @@
             {
                 Command = command,
                 Parameter = parameter,
-                Manager = this.Manager,
                 Message = message
             };
 
