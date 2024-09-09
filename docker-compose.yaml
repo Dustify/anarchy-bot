@@ -1,0 +1,6 @@
+version: '3'
+services:
+  anarchy-bot:
+    build: ./anarchy-bot-container
+    image: dustify.azurecr.io/anarchy-bot
+    container_name: anarchy-bot
